@@ -1,0 +1,119 @@
+---
+title: "CIA2_MLA2"
+author: "Nitya"
+date: "2023-12-06"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+# Import necessary libraries
+
+```{r}
+# Importing relevant libraries
+library(arules)
+library(arulesViz)
+library(dplyr)
+library(ggplot2)
+library(wordcloud2)
+```
+
+
+# Step 1: Data Loading and Exploration
+
+# Load the dataset
+
+```{r}
+medx <- read.csv("C:\\Users\\nitya\\Desktop\\Notes\\T5\\MLA-II\\CIA2\\data22.csv", header = TRUE)
+```
+
+# Display the first few rows of the dataset
+
+```{r}
+head(medx)
+```
+
+# Display summary statistics of the dataset
+
+```{r}
+summary(medx)
+```
+
+# Check the structure of the dataset
+
+```{r}
+str(medx)
+```
+
+# Display the dimensions of the dataset
+
+```{r}
+dim(medx)
+```
+
+
+# Step 2: Data Transformation for Apriori Algorithm
+
+# Split the dataset into transactions based on "Bill.No."
+
+```{r}
+medx_trans <- split(x = medx[,"Item_Code"], f = medx$Bill.No.)
+```
+
+# Convert the transactions to the appropriate format
+
+```{r}
+medx_trans <- as(medx_trans, "transactions")
+```
+
+# Display summary statistics of the transaction data
+
+```{r}
+summary(medx_trans)
+```
+
+# Visualize item frequency using a bar plot
+
+```{r}
+itemFrequencyPlot(medx_trans, topN = 10, type = "absolute")
+```
+
+
+# Step 3: Apriori Algorithm
+
+# Apply the Apriori algorithm with specified parameters
+
+```{r}
+apriori_rules <- apriori(medx_trans, parameter = list(sup = 0.001, conf = 0.6, target = "rules"))
+```
+
+
+# Display summary statistics of the generated rules
+
+```{r}
+summary(apriori_rules)
+```
+
+
+# Step 4: Rule Inspection and Sorting
+
+# Inspect and display the rules, sorted by lift in descending order
+
+```{r}
+inspect(sort(apriori_rules, by = "confidence", decreasing = TRUE))
+```
+
+
+# Step 5: Rule Visualization
+
+# Visualize a subset of rules using a graph
+
+```{r}
+plot(head(sort(apriori_rules, by = "confidence")), method = "graph")
+```
+
+# Visualize all rules in a grouped manner
+
+```{r}
+plot(apriori_rules, method = "grouped")
+```
